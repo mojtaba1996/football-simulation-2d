@@ -1,0 +1,14 @@
+GOAL_COLOR = {
+    'red': (255, 0, 0),
+    'blue': (0, 0, 255),
+}
+BALL_COLOR = (255, 255, 255)
+PLAYER_COLOR = {
+    'red': (255, 0, 0),
+    'blue': (0, 0, 255),
+}
+LINE_COLOR = (190, 190, 190)
+GRASS_COLOR = (0, 125, 0)
+SCORE_BOARD_RED_SCORE_COLOR = (255, 0, 0)
+SCORE_BOARD_BLUE_SCORE_COLOR = (0, 0, 255)
+SCORE_BOARD_CYCLE_COLOR = (255, 255, 255)
