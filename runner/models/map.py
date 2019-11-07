@@ -2,6 +2,9 @@ import random
 import time
 
 import pygame as pg
+
+from runner.exceptions.decision import DecisionException
+from runner.settings.developement import SHOULD_PRINT_DECISIONS_ERROR
 from runner.utils import convert_coordinate_normal_to_pygame, Actions, decision_factory, init_players, sort_decisions, \
     unique_decisions
 from runner.settings import GOAL_COLOR as GC, GOAL_WIDTH as GW, GOAL_DEPTH as GD, SCREEN_HEIGHT as SH, \
@@ -18,27 +21,49 @@ class Map:
         self.ball = ball
         self.score_board = score_board
 
+    @staticmethod
+    def handle_decision_perform_with_exception(decision):
+        try:
+            decision.perform()
+        except DecisionException as de:
+            print(de)
+
     def perform_decisions(self, red_decisions, blue_decisions):
-        all_decisions = []
+        converted_red_decisions = []
+        converted_blue_decisions = []
         for red_decision in red_decisions:
             red_decision['player_color'] = 'red'
-            all_decisions.append(decision_factory(self, red_decision))
+            converted_red_decisions.append(decision_factory(self, red_decision))
         for blue_decision in blue_decisions:
             blue_decision['player_color'] = 'blue'
             if 'direction' in blue_decision:
                 blue_decision['direction'] = (blue_decision['direction'] + 180) % 360
             if 'destination' in blue_decision:
-                blue_decision['destination']['x'] = -blue_decision['destination']['x']
-                blue_decision['destination']['y'] = -blue_decision['destination']['y']
-            all_decisions.append(decision_factory(self, blue_decision))
-        random.shuffle(all_decisions)
+                # blue_decision['destination']['x'] = -blue_decision['destination']['x']
+                # blue_decision['destination']['y'] = -blue_decision['destination']['y']
+                blue_decision['destination'] = {
+                    'x': -blue_decision['destination']['x'],
+                    'y': -blue_decision['destination']['y'],
+                }
+            converted_blue_decisions.append(decision_factory(self, blue_decision))
 
-        all_decisions = sort_decisions(all_decisions)
+        converted_red_decisions = unique_decisions(converted_red_decisions)
+        converted_blue_decisions = unique_decisions(converted_blue_decisions)
 
-        all_decisions = unique_decisions(all_decisions)
-
-        for decision in all_decisions:
-            decision.perform()
+        while len(converted_red_decisions) != 0 and len(converted_blue_decisions) != 0:
+            r = random.randint(0, 1)
+            if r:
+                decision = converted_red_decisions.pop(0)
+                self.handle_decision_perform_with_exception(decision)
+            else:
+                decision = converted_blue_decisions.pop(0)
+                self.handle_decision_perform_with_exception(decision)
+        if len(converted_red_decisions) == 0:
+            for decision in converted_blue_decisions:
+                self.handle_decision_perform_with_exception(decision)
+        else:
+            for decision in converted_red_decisions:
+                self.handle_decision_perform_with_exception(decision)
 
     @staticmethod
     def show_football_pitch(screen):
@@ -93,16 +118,21 @@ class Map:
             self.blue_players[PN - 1].x, self.blue_players[PN - 1].y = self.ball.x, self.ball.y
             time.sleep(1)
 
-    @staticmethod
-    def check_if_crowded(point, players, radius, allowed_number):
+    def check_if_crowded(self, point, players, radius, allowed_number):
         players_in_area = []
         for player in players:
             if ((player.x - point['x']) ** 2 + (player.y - point['y']) ** 2) ** 0.5 < radius:
-                players_in_area.append(player)
+                if not player.is_in_his_penalty_area():
+                    players_in_area.append(player)
+        ''' Kick '''
         while len(players_in_area) > allowed_number:
             random_player = random.choice(players_in_area)
+            if self.ball.owner == random_player:
+                self.ball.owner = None
             random_player.x = 0
             random_player.y = SH // 2 - random_player.radius * 2
+            if random_player.color == 'red':
+                random_player.y = -random_player.y
             players_in_area.remove(random_player)
 
     def check_if_the_bus_is_parked(self):

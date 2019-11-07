@@ -31,13 +31,10 @@ class Move(Decision):
             raise DecisionException(f'ERROR IN DECISION: Cannot move out of screen')
 
     def perform(self):
-        try:
-            self.check_errors()
-            distance = get_distance(self.player, self.destination)
-            if distance < self.speed:
-                self.player.x = self.destination.x
-                self.player.y = self.destination.y
-            else:
-                self.player.move(get_direction(self.player, self.destination), self.speed)
-        except DecisionException as e:
-            print(e)
+        self.check_errors()
+        distance = get_distance(self.player, self.destination)
+        if distance < self.speed:
+            self.player.x = self.destination.x
+            self.player.y = self.destination.y
+        else:
+            self.player.move(get_direction(self.player, self.destination), self.speed)

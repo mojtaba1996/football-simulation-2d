@@ -74,8 +74,9 @@ if __name__ == "__main__":
         the_map.show(screen=screen)
         pg.display.update()
         the_map.check_if_scored()
-        # the_map.check_if_the_bus_is_parked()
-        # the_map.check_if_ball_is_crowded()
+        the_map.check_if_the_bus_is_parked()
+        the_map.check_if_ball_is_crowded()
         the_map.score_board.cycle_number += 1
         if the_map.score_board.cycle_number > 500:
+            time.sleep(1)
             done = True

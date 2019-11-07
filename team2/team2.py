@@ -5,7 +5,7 @@ def move(decisions, player_number, destination, speed):
     decisions.append({
         'action': 'move',
         'player_number': player_number,
-        'destination': destination,
+        'destination': {'x': destination['x'], 'y': destination['y']},
         'speed': speed,
     })
 

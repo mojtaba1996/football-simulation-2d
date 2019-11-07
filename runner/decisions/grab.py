@@ -17,10 +17,6 @@ class Grab(Decision):
         return False
 
     def perform(self):
-        try:
-            if self.can_grab():
-                self.the_map.ball.owner = self.player
-                self.the_map.ball.speed = 0
-
-        except DecisionException as e:
-            print(e)
+        if self.can_grab():
+            self.the_map.ball.owner = self.player
+            self.the_map.ball.speed = 0

@@ -5,7 +5,7 @@ def move(decisions, player_number, destination, speed):
     decisions.append({
         'action': 'move',
         'player_number': player_number,
-        'destination': destination,
+        'destination': {'x': destination['x'], 'y': destination['y']},
         'speed': speed,
     })
 
@@ -57,7 +57,6 @@ def get_distance(a, b):
 def play(red_players, blue_players, red_score, blue_score, ball, time_passed):
     decisions = []
     ############ WRITE YOUR CODE HERE ###########
-
 
     #############################################
     return decisions

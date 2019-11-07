@@ -15,10 +15,7 @@ class Kick(Decision):
             raise DecisionException(f'ERROR IN DECISION: The player is not the owner of the ball')
 
     def perform(self):
-        try:
-            self.check_errors()
-            self.the_map.ball.owner = None
-            self.the_map.ball.direction = self.direction
-            self.the_map.ball.speed = self.power
-        except DecisionException as e:
-            print(e)
+        self.check_errors()
+        self.the_map.ball.owner = None
+        self.the_map.ball.direction = self.direction
+        self.the_map.ball.speed = self.power
