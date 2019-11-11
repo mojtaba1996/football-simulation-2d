@@ -25,8 +25,9 @@ class Move(Decision):
         self.speed = speed
 
     def check_errors(self):
-        if not 0 <= self.speed <= 18:
-            raise DecisionException(f'ERROR IN DECISION: Wrong movement speed {self.speed}')
+        if not 0 <= self.speed <= 10:
+            # raise DecisionException(f'ERROR IN DECISION: Wrong movement speed {self.speed}')
+            self.speed = 10
         if not -SW // 2 < self.destination.x < SW // 2 or not -SH // 2 < self.destination.y < SH // 2:
             raise DecisionException(f'ERROR IN DECISION: Cannot move out of screen')
 
