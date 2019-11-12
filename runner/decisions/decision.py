@@ -12,7 +12,8 @@ class Decision:
 
     def set_player(self):
         if not 0 <= self.player_number < PN:
-            raise DecisionException(f'ERROR IN DECISION: wrong player number {self.player_number}')
+            # raise DecisionException(f'ERROR IN DECISION: wrong player number {self.player_number}')
+            raise DecisionException('ERROR IN DECISION: wrong player number ' + str(self.player_number))
         if self.player_color == 'red':
             self.player = self.the_map.red_players[self.player_number]
         elif self.player_color == 'blue':

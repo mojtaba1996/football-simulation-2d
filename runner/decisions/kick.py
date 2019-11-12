@@ -10,9 +10,10 @@ class Kick(Decision):
 
     def check_errors(self):
         if not 0 <= self.power <= MKP:
-            raise DecisionException(f'ERROR IN DECISION: Wrong kick power {self.power}')
+            # raise DecisionException(f'ERROR IN DECISION: Wrong kick power {self.power}')
+            raise DecisionException('ERROR IN DECISION: Wrong kick power ' + str(self.power))
         if self.the_map.ball.owner != self.player:
-            raise DecisionException(f'ERROR IN DECISION: The player is not the owner of the ball')
+            raise DecisionException('ERROR IN DECISION: The player is not the owner of the ball')
 
     def perform(self):
         self.check_errors()
