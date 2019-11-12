@@ -66,16 +66,16 @@ def play(red_players, blue_players, red_score, blue_score, ball, time_passed):
             if distance < closest_distance:
                 closest_distance = distance
                 closest_id = i
-        if closest_distance >= 18:
-            move(decisions, closest_id, ball, 18)
+        if closest_distance >= 10:
+            move(decisions, closest_id, ball, 10)
         else:
             grab(decisions, closest_id)
     else:
         maghsad = {'x': 300, 'y': -100}
         ball_owner = red_players[ball['owner_number']]
         distance = get_distance(ball_owner, maghsad)
-        if distance >= 18:
-            move(decisions, ball_owner['number'], maghsad, 18)
+        if distance >= 10:
+            move(decisions, ball_owner['number'], maghsad, 10)
         else:
             hadaf = {'x': 500, 'y': 60}
             direction = get_direction(ball_owner, hadaf)
