@@ -5,8 +5,8 @@ from runner.exceptions.decision import DecisionException
 
 
 class Grab(Decision):
-    def __init__(self, the_map, player_number, player_color, priority):
-        super().__init__(the_map, player_number, player_color, priority)
+    def __init__(self, the_map, player_number, player_color):
+        super().__init__(the_map, player_number, player_color)
 
     def can_grab(self):
         grab_radius = self.player.radius + self.the_map.ball.radius
@@ -17,6 +17,10 @@ class Grab(Decision):
         return False
 
     def perform(self):
+        self.check_errors()
         if self.can_grab():
             self.the_map.ball.owner = self.player
             self.the_map.ball.speed = 0
+
+    def check_errors(self):
+        super().check_errors()

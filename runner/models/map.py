@@ -5,13 +5,12 @@ import pygame as pg
 
 from runner.exceptions.decision import DecisionException
 from runner.settings.developement import SHOULD_PRINT_DECISIONS_ERROR
-from runner.utils import convert_coordinate_normal_to_pygame, Actions, decision_factory, init_players, sort_decisions, \
+from runner.utils import convert_coordinate_normal_to_pygame, decision_factory, init_players, \
     unique_decisions
-from runner.settings import GOAL_COLOR as GC, GOAL_WIDTH as GW, GOAL_DEPTH as GD, SCREEN_HEIGHT as SH, \
-    SCREEN_WIDTH as SW, LINE_COLOR as LC, CENTER_POINT_RADIUS as CPR, CENTER_CIRCLE_RADIUS as CCR, \
-    LINE_THICKNESS as LTH, PENALTY_ARIA_X as PAX, PENALTY_ARIA_Y as PAY, \
-    ALLOWED_PLAYERS_IN_PENALTY_AREA_NUMBER as APIPAN, ALLOWED_PLAYERS_AROUND_BALL_NUMBER as APABN, \
-    ALLOWED_PLAYERS_AROUND_BALL_RADIUS as APABR, PLAYER_NUMBER as PN
+from runner.settings import GOAL_COLOR, GOAL_WIDTH, GOAL_DEPTH, SCREEN_HEIGHT, SCREEN_WIDTH, LINE_COLOR, \
+    CENTER_POINT_RADIUS, CENTER_CIRCLE_RADIUS, LINE_THICKNESS, PENALTY_ARIA_X, PENALTY_ARIA_Y, \
+    ALLOWED_PLAYERS_IN_PENALTY_AREA_NUMBER, ALLOWED_PLAYERS_AROUND_BALL_NUMBER, ALLOWED_PLAYERS_AROUND_BALL_RADIUS, \
+    PLAYER_NUMBER, BALL_CROWDED_BAN_CYCLES, PENALTY_ARIA_BAN_CYCLES
 
 
 class Map:
@@ -26,68 +25,137 @@ class Map:
         try:
             decision.perform()
         except DecisionException as de:
-            print(de)
+            if SHOULD_PRINT_DECISIONS_ERROR:
+                print(de)
 
-    def perform_decisions(self, red_decisions, blue_decisions):
-        converted_red_decisions = []
-        converted_blue_decisions = []
-        for red_decision in red_decisions:
-            red_decision['player_color'] = 'red'
-            converted_red_decisions.append(decision_factory(self, red_decision))
-        for blue_decision in blue_decisions:
-            blue_decision['player_color'] = 'blue'
-            if 'direction' in blue_decision:
-                blue_decision['direction'] = (blue_decision['direction'] + 180) % 360
-            if 'destination' in blue_decision:
-                # blue_decision['destination']['x'] = -blue_decision['destination']['x']
-                # blue_decision['destination']['y'] = -blue_decision['destination']['y']
-                blue_decision['destination'] = {
-                    'x': -blue_decision['destination']['x'],
-                    'y': -blue_decision['destination']['y'],
+    def perform_decisions(self, red_decisions_dict, blue_decisions_dict):
+        red_decisions = []
+        blue_decisions = []
+        for red_decision_dict in red_decisions_dict:
+            red_decision_dict['player_color'] = 'red'
+            red_decisions.append(decision_factory(self, red_decision_dict))
+        for blue_decision_dict in blue_decisions_dict:
+            blue_decision_dict['player_color'] = 'blue'
+            if 'direction' in blue_decision_dict:
+                blue_decision_dict['direction'] = (blue_decision_dict['direction'] + 180) % 360
+            if 'destination' in blue_decision_dict:
+                blue_decision_dict['destination'] = {
+                    'x': -blue_decision_dict['destination']['x'],
+                    'y': -blue_decision_dict['destination']['y'],
                 }
-            converted_blue_decisions.append(decision_factory(self, blue_decision))
+            blue_decisions.append(decision_factory(self, blue_decision_dict))
 
-        converted_red_decisions = unique_decisions(converted_red_decisions)
-        converted_blue_decisions = unique_decisions(converted_blue_decisions)
+        red_decisions = unique_decisions(red_decisions)
+        blue_decisions = unique_decisions(blue_decisions)
 
-        while len(converted_red_decisions) != 0 and len(converted_blue_decisions) != 0:
+        while len(red_decisions) != 0 and len(blue_decisions) != 0:
             r = random.randint(0, 1)
             if r:
-                decision = converted_red_decisions.pop(0)
+                decision = red_decisions.pop(0)
                 self.handle_decision_perform_with_exception(decision)
             else:
-                decision = converted_blue_decisions.pop(0)
+                decision = blue_decisions.pop(0)
                 self.handle_decision_perform_with_exception(decision)
-        if len(converted_red_decisions) == 0:
-            for decision in converted_blue_decisions:
+        if len(red_decisions) == 0:
+            for decision in blue_decisions:
                 self.handle_decision_perform_with_exception(decision)
         else:
-            for decision in converted_red_decisions:
+            for decision in red_decisions:
                 self.handle_decision_perform_with_exception(decision)
+        self.decrement_ban_cycles()
+
+    def decrement_ban_cycles(self):
+        for player in self.red_players + self.blue_players:
+            if player.ban_cycles > 0:
+                player.ban_cycles -= 1
 
     @staticmethod
     def show_football_pitch(screen):
-        goal_y_for_pygame = SH // 2 - GW // 2
+        goal_y_for_pygame = SCREEN_HEIGHT // 2 - GOAL_WIDTH // 2
         center_x_for_pygame, center_y_for_pygame = convert_coordinate_normal_to_pygame(0, 0)
         ''' Draw goals '''
-        pg.draw.rect(screen, GC['red'], (0, goal_y_for_pygame, GD, GW), 0)
-        pg.draw.rect(screen, GC['blue'], (SW - GD, goal_y_for_pygame, GD, GW), 0)
+        pg.draw.rect(
+            screen,
+            GOAL_COLOR['red'],
+            (0, goal_y_for_pygame, GOAL_DEPTH, GOAL_WIDTH),
+            0,
+        )
+        pg.draw.rect(
+            screen,
+            GOAL_COLOR['blue'],
+            (SCREEN_WIDTH - GOAL_DEPTH, goal_y_for_pygame, GOAL_DEPTH, GOAL_WIDTH),
+            0,
+        )
         ''' Draw lines  '''
         '''     center point    '''
-        pg.draw.circle(screen, LC, (center_x_for_pygame, center_y_for_pygame), CPR, 0)
+        pg.draw.circle(
+            screen,
+            LINE_COLOR,
+            (center_x_for_pygame, center_y_for_pygame),
+            CENTER_POINT_RADIUS,
+            0,
+        )
         '''     center circle    '''
-        pg.draw.circle(screen, LC, (center_x_for_pygame, center_y_for_pygame), CCR, LTH)
+        pg.draw.circle(
+            screen,
+            LINE_COLOR,
+            (center_x_for_pygame, center_y_for_pygame),
+            CENTER_CIRCLE_RADIUS,
+            LINE_THICKNESS,
+        )
         '''     center line      '''
-        pg.draw.line(screen, LC, (center_x_for_pygame - LTH // 2, 0), (center_x_for_pygame - LTH // 2, SH), LTH)
+        pg.draw.line(
+            screen,
+            LINE_COLOR,
+            (center_x_for_pygame - LINE_THICKNESS // 2, 0),
+            (center_x_for_pygame - LINE_THICKNESS // 2, SCREEN_HEIGHT),
+            LINE_THICKNESS,
+        )
         ''' Draw penalty areas '''
         '''     Left     '''
-        pg.draw.line(screen, LC, (0, (SH - PAY) // 2), (PAX, (SH - PAY) // 2), LTH)
-        pg.draw.line(screen, LC, (0, (SH + PAY) // 2), (PAX, (SH + PAY) // 2), LTH)
-        pg.draw.line(screen, LC, (PAX, (SH - PAY) // 2), (PAX, (SH + PAY) // 2), LTH)
+        pg.draw.line(
+            screen,
+            LINE_COLOR,
+            (0, (SCREEN_HEIGHT - PENALTY_ARIA_Y) // 2),
+            (PENALTY_ARIA_X, (SCREEN_HEIGHT - PENALTY_ARIA_Y) // 2),
+            LINE_THICKNESS,
+        )
+        pg.draw.line(
+            screen,
+            LINE_COLOR,
+            (0, (SCREEN_HEIGHT + PENALTY_ARIA_Y) // 2),
+            (PENALTY_ARIA_X, (SCREEN_HEIGHT + PENALTY_ARIA_Y) // 2),
+            LINE_THICKNESS,
+        )
+        pg.draw.line(
+            screen,
+            LINE_COLOR,
+            (PENALTY_ARIA_X, (SCREEN_HEIGHT - PENALTY_ARIA_Y) // 2),
+            (PENALTY_ARIA_X, (SCREEN_HEIGHT + PENALTY_ARIA_Y) // 2),
+            LINE_THICKNESS,
+        )
         '''     Right     '''
-        pg.draw.line(screen, LC, (SW, (SH - PAY) // 2), (SW - PAX, (SH - PAY) // 2), LTH)
-        pg.draw.line(screen, LC, (SW, (SH + PAY) // 2), (SW - PAX, (SH + PAY) // 2), LTH)
-        pg.draw.line(screen, LC, (SW - PAX, (SH - PAY) // 2), (SW - PAX, (SH + PAY) // 2), LTH)
+        pg.draw.line(
+            screen,
+            LINE_COLOR,
+            (SCREEN_WIDTH, (SCREEN_HEIGHT - PENALTY_ARIA_Y) // 2),
+            (SCREEN_WIDTH - PENALTY_ARIA_X, (SCREEN_HEIGHT - PENALTY_ARIA_Y) // 2),
+            LINE_THICKNESS,
+        )
+        pg.draw.line(
+            screen,
+            LINE_COLOR,
+            (SCREEN_WIDTH, (SCREEN_HEIGHT + PENALTY_ARIA_Y) // 2),
+            (SCREEN_WIDTH - PENALTY_ARIA_X, (SCREEN_HEIGHT + PENALTY_ARIA_Y) // 2),
+            LINE_THICKNESS,
+        )
+        pg.draw.line(
+            screen,
+            LINE_COLOR,
+            (SCREEN_WIDTH - PENALTY_ARIA_X, (SCREEN_HEIGHT - PENALTY_ARIA_Y) // 2),
+            (SCREEN_WIDTH - PENALTY_ARIA_X, (SCREEN_HEIGHT + PENALTY_ARIA_Y) // 2),
+            LINE_THICKNESS,
+        )
 
     def show(self, screen):
         self.show_football_pitch(screen)
@@ -99,26 +167,28 @@ class Map:
         self.score_board.show(screen=screen)
 
     def check_if_scored(self):
-        if self.ball.x - self.ball.radius <= -SW // 2 + GD and (-GW // 2 <= self.ball.y <= GW // 2):
+        if self.ball.x - self.ball.radius <= -SCREEN_WIDTH // 2 + GOAL_DEPTH and \
+                (-GOAL_WIDTH // 2 <= self.ball.y <= GOAL_WIDTH // 2):
             self.score_board.blue_score += 1
             init_players(self.red_players, self.blue_players)
             self.ball.x, self.ball.y = (0, 0)
             self.ball.direction = -1
-            self.ball.owner = self.red_players[PN - 1]
+            self.ball.owner = self.red_players[PLAYER_NUMBER - 1]
             self.ball.speed = 0
-            self.red_players[PN - 1].x, self.red_players[PN - 1].y = self.ball.x, self.ball.y
+            self.red_players[PLAYER_NUMBER - 1].x, self.red_players[PLAYER_NUMBER - 1].y = self.ball.x, self.ball.y
             time.sleep(1)
-        if self.ball.x + self.ball.radius >= SW // 2 - GD and (-GW // 2 <= self.ball.y <= GW // 2):
+        if self.ball.x + self.ball.radius >= SCREEN_WIDTH // 2 - GOAL_DEPTH and \
+                (-GOAL_WIDTH // 2 <= self.ball.y <= GOAL_WIDTH // 2):
             self.score_board.red_score += 1
             init_players(self.red_players, self.blue_players)
             self.ball.x, self.ball.y = (0, 0)
             self.ball.direction = -1
-            self.ball.owner = self.blue_players[PN - 1]
+            self.ball.owner = self.blue_players[PLAYER_NUMBER - 1]
             self.ball.speed = 0
-            self.blue_players[PN - 1].x, self.blue_players[PN - 1].y = self.ball.x, self.ball.y
+            self.blue_players[PLAYER_NUMBER - 1].x, self.blue_players[PLAYER_NUMBER - 1].y = self.ball.x, self.ball.y
             time.sleep(1)
 
-    def check_if_crowded(self, point, players, radius, allowed_number):
+    def check_if_crowded(self, point, players, radius, allowed_number, ban_cycles):
         players_in_area = []
         for player in players:
             if ((player.x - point['x']) ** 2 + (player.y - point['y']) ** 2) ** 0.5 < radius:
@@ -129,24 +199,49 @@ class Map:
             random_player = random.choice(players_in_area)
             if self.ball.owner == random_player:
                 self.ball.owner = None
+            random_player.ban_cycles = ban_cycles
             random_player.x = 0
-            random_player.y = SH // 2 - random_player.radius * 2
+            random_player.y = SCREEN_HEIGHT // 2 - random_player.radius * 2
             if random_player.color == 'red':
                 random_player.y = -random_player.y
             players_in_area.remove(random_player)
 
     def check_if_the_bus_is_parked(self):
         ''' RED '''
-        goal_center = {'x': -SW // 2, 'y': 0}
-        self.check_if_crowded(goal_center, self.red_players, PAX, APIPAN)
+        goal_center = {'x': -SCREEN_WIDTH // 2, 'y': 0}
+        self.check_if_crowded(
+            goal_center,
+            self.red_players,
+            PENALTY_ARIA_X,
+            ALLOWED_PLAYERS_IN_PENALTY_AREA_NUMBER,
+            PENALTY_ARIA_BAN_CYCLES,
+        )
 
         ''' BLUE '''
-        goal_center['x'] = SW // 2
-        self.check_if_crowded(goal_center, self.blue_players, PAX, APIPAN)
+        goal_center['x'] = SCREEN_WIDTH // 2
+        self.check_if_crowded(
+            goal_center,
+            self.blue_players,
+            PENALTY_ARIA_X,
+            ALLOWED_PLAYERS_IN_PENALTY_AREA_NUMBER,
+            PENALTY_ARIA_BAN_CYCLES,
+        )
 
     def check_if_ball_is_crowded(self):
         ball_point = {'x': self.ball.x, 'y': self.ball.y}
         ''' RED '''
-        self.check_if_crowded(ball_point, self.red_players, APABR, APABN)
+        self.check_if_crowded(
+            ball_point,
+            self.red_players,
+            ALLOWED_PLAYERS_AROUND_BALL_RADIUS,
+            ALLOWED_PLAYERS_AROUND_BALL_NUMBER,
+            BALL_CROWDED_BAN_CYCLES,
+        )
         ''' BLUE '''
-        self.check_if_crowded(ball_point, self.blue_players, APABR, APABN)
+        self.check_if_crowded(
+            ball_point,
+            self.blue_players,
+            ALLOWED_PLAYERS_AROUND_BALL_RADIUS,
+            ALLOWED_PLAYERS_AROUND_BALL_NUMBER,
+            BALL_CROWDED_BAN_CYCLES,
+        )

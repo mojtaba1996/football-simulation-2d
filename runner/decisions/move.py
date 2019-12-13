@@ -2,7 +2,7 @@ import math
 
 from runner.decisions import Decision
 from runner.exceptions.decision import DecisionException
-from runner.settings import PLAYER_SPEED as PS, SCREEN_WIDTH as SW, SCREEN_HEIGHT as SH
+from runner.settings import PLAYER_SPEED, SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 # from runner.utils import get_direction, get_distance
@@ -19,16 +19,17 @@ def get_distance(a, b):
 
 
 class Move(Decision):
-    def __init__(self, the_map, player_number, player_color, destination, speed, priority):
-        super().__init__(the_map, player_number, player_color, priority)
+    def __init__(self, the_map, player_number, player_color, destination, speed):
+        super().__init__(the_map, player_number, player_color)
         self.destination = destination
         self.speed = speed
 
     def check_errors(self):
-        if not 0 <= self.speed <= 10:
-            # raise DecisionException(f'ERROR IN DECISION: Wrong movement speed {self.speed}')
-            self.speed = 10
-        if not -SW // 2 < self.destination.x < SW // 2 or not -SH // 2 < self.destination.y < SH // 2:
+        super().check_errors()
+        if not 0 <= self.speed <= PLAYER_SPEED[-1]:
+            raise DecisionException(f'ERROR IN DECISION: Wrong movement speed {self.speed}')
+        if not -SCREEN_WIDTH // 2 < self.destination.x < SCREEN_WIDTH // 2 or \
+                not -SCREEN_HEIGHT // 2 < self.destination.y < SCREEN_HEIGHT // 2:
             # raise DecisionException(f'ERROR IN DECISION: Cannot move out of screen')
             raise DecisionException('ERROR IN DECISION: Cannot move out of screen')
 

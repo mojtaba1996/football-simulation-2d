@@ -1,8 +1,6 @@
-import pygame as pg
 from runner.utils.drawing import write_text_on_pygame_screen
-from runner.settings.game import SCORE_BOARD_FONT_SIZE as SBFS, SCREEN_WIDTH as SW, SCREEN_HEIGHT as SH
-from runner.settings.colors import SCORE_BOARD_RED_SCORE_COLOR as SBRSC, SCORE_BOARD_BLUE_SCORE_COLOR as SBBSC, \
-    SCORE_BOARD_CYCLE_COLOR as SBCC
+from runner.settings.game import SCORE_BOARD_FONT_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
+from runner.settings.colors import SCORE_BOARD_RED_SCORE_COLOR, SCORE_BOARD_BLUE_SCORE_COLOR, SCORE_BOARD_CYCLE_COLOR
 
 
 class ScoreBoard:
@@ -12,6 +10,27 @@ class ScoreBoard:
         self.cycle_number = cycle_number
 
     def show(self, screen):
-        write_text_on_pygame_screen(screen, SBFS, SBRSC, str(self.red_score), SBFS, SBFS // 2)
-        write_text_on_pygame_screen(screen, SBFS, SBBSC, str(self.blue_score), SW - SBFS, SBFS // 2)
-        write_text_on_pygame_screen(screen, SBFS, SBCC, str(self.cycle_number), SW - SBFS, SH - SBFS)
+        write_text_on_pygame_screen(
+            screen,
+            SCORE_BOARD_FONT_SIZE,
+            SCORE_BOARD_RED_SCORE_COLOR,
+            str(self.red_score),
+            SCORE_BOARD_FONT_SIZE,
+            SCORE_BOARD_FONT_SIZE // 2,
+        )
+        write_text_on_pygame_screen(
+            screen,
+            SCORE_BOARD_FONT_SIZE,
+            SCORE_BOARD_BLUE_SCORE_COLOR,
+            str(self.blue_score),
+            SCREEN_WIDTH - SCORE_BOARD_FONT_SIZE,
+            SCORE_BOARD_FONT_SIZE // 2,
+        )
+        write_text_on_pygame_screen(
+            screen,
+            SCORE_BOARD_FONT_SIZE,
+            SCORE_BOARD_CYCLE_COLOR,
+            str(self.cycle_number),
+            SCREEN_WIDTH - SCORE_BOARD_FONT_SIZE,
+            SCREEN_HEIGHT - SCORE_BOARD_FONT_SIZE,
+        )

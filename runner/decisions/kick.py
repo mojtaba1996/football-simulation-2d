@@ -1,15 +1,16 @@
 from runner.decisions import Decision, DecisionException
-from runner.settings import MAX_KICK_POWER as MKP
+from runner.settings import MAX_KICK_POWER
 
 
 class Kick(Decision):
-    def __init__(self, the_map, player_number, player_color, direction, power, priority):
-        super().__init__(the_map, player_number, player_color, priority)
+    def __init__(self, the_map, player_number, player_color, direction, power):
+        super().__init__(the_map, player_number, player_color)
         self.direction = direction
         self.power = power
 
     def check_errors(self):
-        if not 0 <= self.power <= MKP:
+        super().check_errors()
+        if not 0 <= self.power <= MAX_KICK_POWER:
             # raise DecisionException(f'ERROR IN DECISION: Wrong kick power {self.power}')
             raise DecisionException('ERROR IN DECISION: Wrong kick power ' + str(self.power))
         if self.the_map.ball.owner != self.player:
