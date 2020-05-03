@@ -1,11 +1,13 @@
 import time
 from threading import Thread
 
-from runner.models import Ball, Map
+from runner.models import Map
 from runner.models.score_board import ScoreBoard
+from runner.models.ball import init_ball
+from runner.models.player import init_players
 from runner.settings import BALL_RADIUS, SCREEN_HEIGHT, SCREEN_WIDTH, GRASS_COLOR
 import pygame as pg
-from runner.utils import init_players, get_information_dictionary, reverse_information
+from runner.utils import get_information_dictionary, reverse_information
 from team1.team1 import play as red_play
 from team2.team2 import play as blue_play
 
@@ -22,15 +24,15 @@ def blue_fire(red_players, blue_players, red_score, blue_score, ball, time_passe
 
 if __name__ == "__main__":
     ''' INIT OBJECTS AND VARS '''
+    pg.init()
+    screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     red_players = []
     blue_players = []
     init_players(red_players, blue_players)
-    ball = Ball(x=0, y=0, speed=0, direction=-1, radius=BALL_RADIUS)
+    ball = init_ball()
     score_board = ScoreBoard(red_score=0, blue_score=0, cycle_number=0)
     the_map = Map(red_players=red_players, blue_players=blue_players, ball=ball, score_board=score_board)
     ''' INIT PYGAME '''
-    pg.init()
-    screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     screen.fill(GRASS_COLOR)
     the_map.show(screen=screen)
     pg.display.update()
@@ -81,7 +83,7 @@ if __name__ == "__main__":
         blue_thread.start()
         red_thread.start()
         for i in range(5):
-            time.sleep(0.1)
+            time.sleep(0.05)
             if len(blue_decisions) != 0 and len(red_decisions) != 0:
                 break
 

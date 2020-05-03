@@ -5,8 +5,9 @@ import pygame as pg
 
 from runner.exceptions.decision import DecisionException
 from runner.settings.developement import SHOULD_PRINT_DECISIONS_ERROR
-from runner.utils import convert_coordinate_normal_to_pygame, decision_factory, init_players, \
+from runner.utils import convert_coordinate_normal_to_pygame, decision_factory, \
     unique_decisions
+from runner.models.player import init_players
 from runner.settings import GOAL_COLOR, GOAL_WIDTH, GOAL_DEPTH, SCREEN_HEIGHT, SCREEN_WIDTH, LINE_COLOR, \
     CENTER_POINT_RADIUS, CENTER_CIRCLE_RADIUS, LINE_THICKNESS, PENALTY_ARIA_X, PENALTY_ARIA_Y, \
     ALLOWED_PLAYERS_IN_PENALTY_AREA_NUMBER, ALLOWED_PLAYERS_AROUND_BALL_NUMBER, ALLOWED_PLAYERS_AROUND_BALL_RADIUS, \
