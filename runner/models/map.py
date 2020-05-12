@@ -11,7 +11,7 @@ from runner.models.player import init_players
 from runner.settings import GOAL_COLOR, GOAL_WIDTH, GOAL_DEPTH, SCREEN_HEIGHT, SCREEN_WIDTH, LINE_COLOR, \
     CENTER_POINT_RADIUS, CENTER_CIRCLE_RADIUS, LINE_THICKNESS, PENALTY_ARIA_X, PENALTY_ARIA_Y, \
     ALLOWED_PLAYERS_IN_PENALTY_AREA_NUMBER, ALLOWED_PLAYERS_AROUND_BALL_NUMBER, ALLOWED_PLAYERS_AROUND_BALL_RADIUS, \
-    PLAYER_NUMBER, BALL_CROWDED_BAN_CYCLES, PENALTY_ARIA_BAN_CYCLES
+    PLAYER_NUMBER, BALL_CROWDED_BAN_CYCLES, PENALTY_ARIA_BAN_CYCLES, VERTICAL_MARGIN
 
 
 class Map:
@@ -72,22 +72,23 @@ class Map:
 
     @staticmethod
     def show_football_pitch(screen):
-        goal_y_for_pygame = SCREEN_HEIGHT // 2 - GOAL_WIDTH // 2
-        center_x_for_pygame, center_y_for_pygame = convert_coordinate_normal_to_pygame(0, 0)
         ''' Draw goals '''
+        red_goal_x_for_pygame, red_goal_y_for_pygame = convert_coordinate_normal_to_pygame(-SCREEN_WIDTH//2, GOAL_WIDTH//2)
         pg.draw.rect(
             screen,
             GOAL_COLOR['red'],
-            (0, goal_y_for_pygame, GOAL_DEPTH, GOAL_WIDTH),
+            (red_goal_x_for_pygame, red_goal_y_for_pygame, GOAL_DEPTH, GOAL_WIDTH),
             0,
         )
+        blue_goal_x_for_pygame, blue_goal_y_for_pygame = convert_coordinate_normal_to_pygame(SCREEN_WIDTH//2 - GOAL_DEPTH, GOAL_WIDTH//2)
         pg.draw.rect(
             screen,
             GOAL_COLOR['blue'],
-            (SCREEN_WIDTH - GOAL_DEPTH, goal_y_for_pygame, GOAL_DEPTH, GOAL_WIDTH),
+            (blue_goal_x_for_pygame, blue_goal_y_for_pygame, GOAL_DEPTH, GOAL_WIDTH),
             0,
         )
         ''' Draw lines  '''
+        center_x_for_pygame, center_y_for_pygame = convert_coordinate_normal_to_pygame(0, 0)
         '''     center point    '''
         pg.draw.circle(
             screen,
@@ -105,61 +106,85 @@ class Map:
             LINE_THICKNESS,
         )
         '''     center line      '''
+        center_line_x1_for_pygame, center_line_y1_for_pygame = convert_coordinate_normal_to_pygame(-LINE_THICKNESS//2, SCREEN_HEIGHT//2)
+        center_line_x2_for_pygame, center_line_y2_for_pygame = convert_coordinate_normal_to_pygame(-LINE_THICKNESS//2, -SCREEN_HEIGHT//2)
         pg.draw.line(
             screen,
             LINE_COLOR,
-            (center_x_for_pygame - LINE_THICKNESS // 2, 0),
-            (center_x_for_pygame - LINE_THICKNESS // 2, SCREEN_HEIGHT),
+            (center_line_x1_for_pygame, center_line_y1_for_pygame),
+            (center_line_x2_for_pygame, center_line_y2_for_pygame),
             LINE_THICKNESS,
         )
         ''' Draw penalty areas '''
         '''     Left     '''
+        left_x1_for_pygame, left_y1_for_pygame = convert_coordinate_normal_to_pygame(-SCREEN_WIDTH//2, PENALTY_ARIA_Y//2)
+        left_x2_for_pygame, left_y2_for_pygame = left_x1_for_pygame + PENALTY_ARIA_X, left_y1_for_pygame
+        left_x3_for_pygame, left_y3_for_pygame = left_x2_for_pygame, left_y2_for_pygame + PENALTY_ARIA_Y
+        left_x4_for_pygame, left_y4_for_pygame = left_x3_for_pygame - PENALTY_ARIA_X, left_y3_for_pygame
         pg.draw.line(
             screen,
             LINE_COLOR,
-            (0, (SCREEN_HEIGHT - PENALTY_ARIA_Y) // 2),
-            (PENALTY_ARIA_X, (SCREEN_HEIGHT - PENALTY_ARIA_Y) // 2),
+            (left_x1_for_pygame, left_y1_for_pygame),
+            (left_x2_for_pygame, left_y2_for_pygame),
             LINE_THICKNESS,
         )
         pg.draw.line(
             screen,
             LINE_COLOR,
-            (0, (SCREEN_HEIGHT + PENALTY_ARIA_Y) // 2),
-            (PENALTY_ARIA_X, (SCREEN_HEIGHT + PENALTY_ARIA_Y) // 2),
+            (left_x2_for_pygame, left_y2_for_pygame),
+            (left_x3_for_pygame, left_y3_for_pygame),
             LINE_THICKNESS,
         )
         pg.draw.line(
             screen,
             LINE_COLOR,
-            (PENALTY_ARIA_X, (SCREEN_HEIGHT - PENALTY_ARIA_Y) // 2),
-            (PENALTY_ARIA_X, (SCREEN_HEIGHT + PENALTY_ARIA_Y) // 2),
+            (left_x3_for_pygame, left_y3_for_pygame),
+            (left_x4_for_pygame, left_y4_for_pygame),
             LINE_THICKNESS,
         )
         '''     Right     '''
+        right_x1_for_pygame, right_y1_for_pygame = convert_coordinate_normal_to_pygame(SCREEN_WIDTH//2, PENALTY_ARIA_Y//2)
+        right_x2_for_pygame, right_y2_for_pygame = right_x1_for_pygame - PENALTY_ARIA_X, right_y1_for_pygame
+        right_x3_for_pygame, right_y3_for_pygame = right_x2_for_pygame, right_y2_for_pygame + PENALTY_ARIA_Y
+        right_x4_for_pygame, right_y4_for_pygame = right_x3_for_pygame + PENALTY_ARIA_X, right_y3_for_pygame
         pg.draw.line(
             screen,
             LINE_COLOR,
-            (SCREEN_WIDTH, (SCREEN_HEIGHT - PENALTY_ARIA_Y) // 2),
-            (SCREEN_WIDTH - PENALTY_ARIA_X, (SCREEN_HEIGHT - PENALTY_ARIA_Y) // 2),
+            (right_x1_for_pygame, right_y1_for_pygame),
+            (right_x2_for_pygame, right_y2_for_pygame),
             LINE_THICKNESS,
         )
         pg.draw.line(
             screen,
             LINE_COLOR,
-            (SCREEN_WIDTH, (SCREEN_HEIGHT + PENALTY_ARIA_Y) // 2),
-            (SCREEN_WIDTH - PENALTY_ARIA_X, (SCREEN_HEIGHT + PENALTY_ARIA_Y) // 2),
+            (right_x2_for_pygame, right_y2_for_pygame),
+            (right_x3_for_pygame, right_y3_for_pygame),
             LINE_THICKNESS,
         )
         pg.draw.line(
             screen,
             LINE_COLOR,
-            (SCREEN_WIDTH - PENALTY_ARIA_X, (SCREEN_HEIGHT - PENALTY_ARIA_Y) // 2),
-            (SCREEN_WIDTH - PENALTY_ARIA_X, (SCREEN_HEIGHT + PENALTY_ARIA_Y) // 2),
+            (right_x3_for_pygame, right_y3_for_pygame),
+            (right_x4_for_pygame, right_y4_for_pygame),
             LINE_THICKNESS,
+        )
+
+    @staticmethod
+    def draw_margins(screen):
+        pg.draw.rect(
+            screen,
+            (0, 0, 0),
+            (0, 0, SCREEN_WIDTH, VERTICAL_MARGIN)
+        )
+        pg.draw.rect(
+            screen,
+            (0, 0, 0),
+            (0, SCREEN_HEIGHT+VERTICAL_MARGIN, SCREEN_WIDTH, VERTICAL_MARGIN)
         )
 
     def show(self, screen):
         self.show_football_pitch(screen)
+        self.draw_margins(screen)
         for red_player in self.red_players:
             red_player.show(screen=screen)
         for blue_player in self.blue_players:
@@ -189,60 +214,51 @@ class Map:
             self.blue_players[PLAYER_NUMBER - 1].x, self.blue_players[PLAYER_NUMBER - 1].y = self.ball.x, self.ball.y
             time.sleep(1)
 
-    def check_if_crowded(self, point, players, radius, allowed_number, ban_cycles):
-        players_in_area = []
-        for player in players:
-            if ((player.x - point['x']) ** 2 + (player.y - point['y']) ** 2) ** 0.5 < radius:
-                if not player.is_in_his_penalty_area():
-                    players_in_area.append(player)
-        ''' Kick '''
+    def kick_players(self, players_in_area, allowed_number, ban_cycles):
         while len(players_in_area) > allowed_number:
             random_player = random.choice(players_in_area)
             if self.ball.owner == random_player:
                 self.ball.owner = None
             random_player.ban_cycles = ban_cycles
             random_player.x = 0
-            random_player.y = SCREEN_HEIGHT // 2 - random_player.radius * 2
+            random_player.y = SCREEN_HEIGHT // 2 + VERTICAL_MARGIN - random_player.radius
             if random_player.color == 'red':
                 random_player.y = -random_player.y
             players_in_area.remove(random_player)
 
     def check_if_the_bus_is_parked(self):
         ''' RED '''
-        goal_center = {'x': -SCREEN_WIDTH // 2, 'y': 0}
-        self.check_if_crowded(
-            goal_center,
-            self.red_players,
-            PENALTY_ARIA_X,
-            ALLOWED_PLAYERS_IN_PENALTY_AREA_NUMBER,
-            PENALTY_ARIA_BAN_CYCLES,
-        )
+        red_players_in_area = []
+        for player in self.red_players:
+            if -SCREEN_WIDTH//2<= player.x <= -SCREEN_HEIGHT//2 + PENALTY_ARIA_X:
+                if -PENALTY_ARIA_Y//2 <= player.y <= PENALTY_ARIA_Y//2:
+                    if player.ban_cycles == 0:
+                        red_players_in_area.append(player)
+        self.kick_players(red_players_in_area, ALLOWED_PLAYERS_IN_PENALTY_AREA_NUMBER, PENALTY_ARIA_BAN_CYCLES)
 
         ''' BLUE '''
-        goal_center['x'] = SCREEN_WIDTH // 2
-        self.check_if_crowded(
-            goal_center,
-            self.blue_players,
-            PENALTY_ARIA_X,
-            ALLOWED_PLAYERS_IN_PENALTY_AREA_NUMBER,
-            PENALTY_ARIA_BAN_CYCLES,
-        )
+        blue_players_in_area = []
+        for player in self.blue_players:
+            if SCREEN_WIDTH//2 - PENALTY_ARIA_X <= player.x <= SCREEN_WIDTH//2:
+                if -PENALTY_ARIA_Y//2 <= player.y <= PENALTY_ARIA_Y//2:
+                    if player.ban_cycles == 0:
+                        blue_players_in_area.append(player)
+        self.kick_players(blue_players_in_area, ALLOWED_PLAYERS_IN_PENALTY_AREA_NUMBER, PENALTY_ARIA_BAN_CYCLES)
 
     def check_if_ball_is_crowded(self):
-        ball_point = {'x': self.ball.x, 'y': self.ball.y}
         ''' RED '''
-        self.check_if_crowded(
-            ball_point,
-            self.red_players,
-            ALLOWED_PLAYERS_AROUND_BALL_RADIUS,
-            ALLOWED_PLAYERS_AROUND_BALL_NUMBER,
-            BALL_CROWDED_BAN_CYCLES,
-        )
+        red_players_arround_ball = []
+        for player in self.red_players:
+            if ((self.ball.x - player.x)**2 + (self.ball.y - player.y)**2)**0.5 < ALLOWED_PLAYERS_AROUND_BALL_RADIUS:
+                if not player.is_in_his_penalty_area():
+                    if player.ban_cycles == 0:
+                        red_players_arround_ball.append(player)
+        self.kick_players(red_players_arround_ball, ALLOWED_PLAYERS_AROUND_BALL_NUMBER, BALL_CROWDED_BAN_CYCLES)
         ''' BLUE '''
-        self.check_if_crowded(
-            ball_point,
-            self.blue_players,
-            ALLOWED_PLAYERS_AROUND_BALL_RADIUS,
-            ALLOWED_PLAYERS_AROUND_BALL_NUMBER,
-            BALL_CROWDED_BAN_CYCLES,
-        )
+        blue_players_arround_ball = []
+        for player in self.blue_players:
+            if ((self.ball.x - player.x)**2 + (self.ball.y - player.y)**2)**0.5 < ALLOWED_PLAYERS_AROUND_BALL_RADIUS:
+                if not player.is_in_his_penalty_area():
+                    if player.ban_cycles == 0:
+                        blue_players_arround_ball.append(player)
+        self.kick_players(blue_players_arround_ball, ALLOWED_PLAYERS_AROUND_BALL_NUMBER, BALL_CROWDED_BAN_CYCLES)

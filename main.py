@@ -5,7 +5,7 @@ from runner.models import Map
 from runner.models.score_board import ScoreBoard
 from runner.models.ball import init_ball
 from runner.models.player import init_players
-from runner.settings import BALL_RADIUS, SCREEN_HEIGHT, SCREEN_WIDTH, GRASS_COLOR
+from runner.settings import BALL_RADIUS, SCREEN_HEIGHT, SCREEN_WIDTH, GRASS_COLOR, VERTICAL_MARGIN
 import pygame as pg
 from runner.utils import get_information_dictionary, reverse_information
 from team1.team1 import play as red_play
@@ -25,7 +25,7 @@ def blue_fire(red_players, blue_players, red_score, blue_score, ball, time_passe
 if __name__ == "__main__":
     ''' INIT OBJECTS AND VARS '''
     pg.init()
-    screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT + 2*VERTICAL_MARGIN))
     red_players = []
     blue_players = []
     init_players(red_players, blue_players)

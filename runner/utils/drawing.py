@@ -1,10 +1,10 @@
-from runner.settings import SCREEN_HEIGHT, SCREEN_WIDTH
+from runner.settings import SCREEN_HEIGHT, SCREEN_WIDTH, VERTICAL_MARGIN
 import pygame as pg
 
 
 def convert_coordinate_normal_to_pygame(x, y):
     new_x = SCREEN_WIDTH // 2 + x
-    new_y = SCREEN_HEIGHT // 2 - y
+    new_y = SCREEN_HEIGHT // 2 + VERTICAL_MARGIN - y
     return new_x, new_y
 
 
