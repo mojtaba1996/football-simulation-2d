@@ -230,7 +230,7 @@ class Map:
         ''' RED '''
         red_players_in_area = []
         for player in self.red_players:
-            if -SCREEN_WIDTH//2<= player.x <= -SCREEN_HEIGHT//2 + PENALTY_ARIA_X:
+            if -SCREEN_WIDTH//2<= player.x <= -SCREEN_WIDTH//2 + PENALTY_ARIA_X:
                 if -PENALTY_ARIA_Y//2 <= player.y <= PENALTY_ARIA_Y//2:
                     if player.ban_cycles == 0:
                         red_players_in_area.append(player)
