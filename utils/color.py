@@ -1,0 +1,13 @@
+from .utils import *
+
+
+GRASS_COLOR = (0, 125, 0)
+GOAL_COLOR = {
+    'red': (255, 0, 0),
+    'blue': (0, 0, 255),
+}
+LINE_COLOR = (190, 190, 190)
+SCOREBOARD_RED_SCORE_COLOR = (255, 0, 0)
+SCOREBOARD_BLUE_SCORE_COLOR = (0, 0, 255)
+SCOREBOARD_CYCLE_COLOR = (0, 0, 0)
+PLAYER_TEXTS_COLOR = (255, 255, 255)
