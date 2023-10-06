@@ -1,24 +1,24 @@
 # red_players:
 <pre>
 [
-    {'x': -428, 'y': 0, 'name': 'Player0', 'number': 0, 'color': 'red', 'radius': 18, 'ban_cycles': 0},
-    {'x': -334, 'y': 216, 'name': 'Player1', 'number': 1, 'color': 'red', 'radius': 10, 'ban_cycles': 0},
-    {'x': -250, 'y': -217, 'name': 'Player2', 'number': 2, 'color': 'red', 'radius': 10, 'ban_cycles': 0},
-    {'x': -167, 'y': 216, 'name': 'Player3', 'number': 3, 'color': 'red', 'radius': 10, 'ban_cycles': 0},
-    {'x': -83, 'y': -217, 'name': 'Player4', 'number': 4, 'color': 'red', 'radius': 10, 'ban_cycles': 0},
-    {'x': 0, 'y': 216, 'name': 'Player5', 'number': 5, 'color': 'red', 'radius': 10, 'ban_cycles': 0},
+    {'x': -428, 'y': 0, 'name': 'Player0', 'number': 0, 'radius': 18, 'ban_cycles': 0},
+    {'x': -334, 'y': 216, 'name': 'Player1', 'number': 1, 'radius': 10, 'ban_cycles': 0},
+    {'x': -250, 'y': -217, 'name': 'Player2', 'number': 2, 'radius': 10, 'ban_cycles': 0},
+    {'x': -167, 'y': 216, 'name': 'Player3', 'number': 3, 'radius': 10, 'ban_cycles': 0},
+    {'x': -83, 'y': -217, 'name': 'Player4', 'number': 4, 'radius': 10, 'ban_cycles': 0},
+    {'x': 0, 'y': 216, 'name': 'Player5', 'number': 5, 'radius': 10, 'ban_cycles': 0},
 ]
 </pre>
 
 # blue_players:
 <pre>
 [
-    {'x': 428, 'y': 0, 'name': 'Player0', 'number': 0, 'color': 'blue', 'radius': 18, 'ban_cycles': 0},
-    {'x': 334, 'y': -216, 'name': 'Player1', 'number': 1, 'color': 'blue', 'radius': 10, 'ban_cycles': 0},
-    {'x': 250, 'y': 217, 'name': 'Player2', 'number': 2, 'color': 'blue', 'radius': 10, 'ban_cycles': 0},
-    {'x': 167, 'y': -216, 'name': 'Player3', 'number': 3, 'color': 'blue', 'radius': 10, 'ban_cycles': 0},
-    {'x': 83, 'y': 217, 'name': 'Player4', 'number': 4, 'color': 'blue', 'radius': 10, 'ban_cycles': 0},
-    {'x': 0, 'y': -216, 'name': 'Player5', 'number': 5, 'color': 'blue', 'radius': 10, 'ban_cycles': 0},
+    {'x': 428, 'y': 0, 'name': 'Player0', 'number': 0, 'radius': 18, 'ban_cycles': 0},
+    {'x': 334, 'y': -216, 'name': 'Player1', 'number': 1, 'radius': 10, 'ban_cycles': 0},
+    {'x': 250, 'y': 217, 'name': 'Player2', 'number': 2, 'radius': 10, 'ban_cycles': 0},
+    {'x': 167, 'y': -216, 'name': 'Player3', 'number': 3, 'radius': 10, 'ban_cycles': 0},
+    {'x': 83, 'y': 217, 'name': 'Player4', 'number': 4, 'radius': 10, 'ban_cycles': 0},
+    {'x': 0, 'y': -216, 'name': 'Player5', 'number': 5, 'radius': 10, 'ban_cycles': 0},
 ]
 </pre>
 

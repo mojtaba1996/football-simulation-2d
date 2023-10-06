@@ -70,7 +70,6 @@ class Player:
             'y': self.y,
             'name': self.name,
             'number': self.number,
-            'color': self.color,
             'radius': self.radius,
             'ban_cycles': self.ban_cycles
         }
@@ -82,7 +81,6 @@ class Player:
             'y': -self.y,
             'name': self.name,
             'number': self.number,
-            'color': 'blue' if self.color == 'red' else 'red',
             'radius': self.radius,
             'ban_cycles': self.ban_cycles,
         }
