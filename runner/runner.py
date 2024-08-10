@@ -1,6 +1,6 @@
 import random
 import time
-from threading import Thread
+from concurrent.futures import ThreadPoolExecutor
 
 import pygame as pg
 
@@ -10,15 +10,6 @@ import utils
 from decision import get_decisions
 from team1 import play as red_play
 from team2 import play as blue_play
-
-
-def red_fire(*args, **kwargs):
-    global red_responses
-    red_responses = red_play(*args, **kwargs)
-
-def blue_fire(*args, **kwargs):
-    global blue_responses
-    blue_responses = blue_play(*args, **kwargs)
 
 
 class Runner:
@@ -50,35 +41,33 @@ class Runner:
                 continue
             if self.scoreboard.cycle_number > self.config.max_cycle:
                 continue
-            red_responses = None
-            blue_responses = None
-            red_thread = Thread(
-                target=red_fire,
-                args=self._get_args_for_red_team(),
-            )
-            blue_thread = Thread(
-                target=blue_fire,
-                args=self._get_args_for_blue_team(),
-            )
-            blue_thread.start()
-            red_thread.start()
-            for _ in range(self.config.delay_count):
-                time.sleep(self.config.delay_amount)
-                if red_responses is not None and blue_responses is not None:
-                    break
-            if not isinstance(red_responses, list):
-                red_responses = []
-            if not isinstance(blue_responses, list):
-                blue_responses = []
 
-            self.perform_decisions(red_responses, blue_responses)
+            with ThreadPoolExecutor() as executor:
+                red_future = executor.submit(
+                    utils.run_with_timeout,
+                    red_play,
+                    self.config.play_timeout,
+                    [],
+                    *self._get_args_for_red_team(),
+                )
+                blue_future = executor.submit(
+                    utils.run_with_timeout,
+                    blue_play,
+                    self.config.play_timeout,
+                    [],
+                    *self._get_args_for_blue_team(),
+                )
+                red_response = red_future.result()
+                blue_response = blue_future.result()
+
+            self.perform_decisions(red_response, blue_response)
             self.decrement_ban_cycles()
             self.ball.move()
             self.check_if_scored()
             self.check_if_the_bus_is_parked()
             self.check_if_ball_is_crowded()
-
             self._show_and_increase_cycle_number()
+            time.sleep(self.config.cycle_delay)
             if self.scoreboard.cycle_number > self.config.max_cycle:
                 if self.config.additional_delay:
                     time.sleep(4)
@@ -93,8 +82,8 @@ class Runner:
             if utils.SHOULD_PRINT_DECISIONS_ERROR:
                 print(de)
 
-    def perform_decisions(self, red_responses, blue_responses):
-        red_decisions, blue_decisions = get_decisions(self, red_responses, blue_responses)
+    def perform_decisions(self, red_response, blue_response):
+        red_decisions, blue_decisions = get_decisions(self, red_response, blue_response)
         
         while len(red_decisions) != 0 and len(blue_decisions) != 0:
             r = random.randint(0, 1)
