@@ -1,8 +1,14 @@
+import argparse
 from config import Config
 from runner import Runner
 
 
 if __name__ == "__main__":
-    r = Runner(Config())
+    parser = argparse.ArgumentParser(description="2D Soccer Simulation")
+    parser.add_argument('--config', type=str, default='config.yaml', help='Path to the configuration file')
+
+    args = parser.parse_args()
+    config = Config(path=args.config)
+    r = Runner(config)
     r.run()
     r.end()
