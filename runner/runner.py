@@ -73,13 +73,12 @@ class Runner:
                     time.sleep(4)
                 end = True
 
-    @staticmethod
-    def handle_decision_perform_with_exception(decision):
+    def handle_decision_perform_with_exception(self, decision):
         try:
             decision.validate()
             decision.perform()
         except exception.DecisionException as de:
-            if utils.SHOULD_PRINT_DECISIONS_ERROR:
+            if self.config.print_decision_errors:
                 print(de)
 
     def perform_decisions(self, red_response, blue_response):
@@ -181,8 +180,8 @@ class Runner:
                 time.sleep(1)
 
     def end(self):
-        result_file = open('result.txt', 'w')
-        result_file.write(f"{self.scoreboard.red_score} {self.scoreboard.blue_score}")
+        with open('result.txt', 'w') as result_file:
+            result_file.write(f"{self.scoreboard.red_score} {self.scoreboard.blue_score}")
         print('end')
 
     def _init_players(self):

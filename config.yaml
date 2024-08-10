@@ -1,0 +1,8 @@
+team1_name: team1
+team2_name: team2
+play_timeout: 0.5
+max_cycle: 500
+cycle_delay: 0.03
+additional_delay: true
+graphical_output: true
+print_decision_errors: true

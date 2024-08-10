@@ -1,7 +1,0 @@
-team1
-team2
-0.5
-500
-0.03
-True
-True
