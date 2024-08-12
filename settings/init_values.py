@@ -38,5 +38,3 @@ for i in range(1, PLAYER_COUNT):
         'name': "Player{}".format(i),
         'radius': PLAYER_RADIUS,
     })
-
-SHOULD_PRINT_DECISIONS_ERROR = True

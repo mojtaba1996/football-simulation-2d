@@ -2,24 +2,27 @@ import math
 
 import pygame as pg
 
-import utils
+import settings.game
+import settings.links
+import settings.size
+import utils.geometry
 
 
 class Ball:
     def __init__(self, x=None, y=None, radius=None, img=None, owner=None, speed=None, direction=None):
-        default_ball_image = pg.image.load(utils.BALL_IMG_LINK)
-        default_ball_image = pg.transform.scale(default_ball_image, (2 * utils.BALL_RADIUS, 2 * utils.BALL_RADIUS))
+        default_ball_image = pg.image.load(settings.links.BALL_IMG_LINK)
+        default_ball_image = pg.transform.scale(default_ball_image, (2 * settings.size.BALL_RADIUS, 2 * settings.size.BALL_RADIUS))
         default_ball_image.convert_alpha()
         self.x = x or 0
         self.y = y or 0
-        self.radius = radius or utils.BALL_RADIUS
+        self.radius = radius or settings.size.BALL_RADIUS
         self.img = img or default_ball_image
         self.owner = owner
         self.speed = speed or 0
         self.direction = direction
 
     def draw(self, screen):
-        pygame_x, pygame_y = utils.convert_coordinate_cartesian_to_pygame(self.x, self.y)
+        pygame_x, pygame_y = utils.geometry.convert_coordinate_cartesian_to_pygame(self.x, self.y)
         screen.blit(
             self.img,
             (int(pygame_x) - self.radius, int(pygame_y) - self.radius)
@@ -31,22 +34,22 @@ class Ball:
                 return
             self.x += self.speed * math.cos(math.radians(self.direction))
             self.y += self.speed * math.sin(math.radians(self.direction))
-            self.speed -= utils.FRICTION
+            self.speed -= settings.game.FRICTION
             if self.speed < 0:
                 self.speed = 0
                 self.direction = None
-            if self.x < -utils.FOOTBALL_PITCH_WIDTH // 2 + self.radius:
-                self.x = -utils.FOOTBALL_PITCH_WIDTH // 2 + self.radius + 1
+            if self.x < -settings.size.FOOTBALL_PITCH_WIDTH // 2 + self.radius:
+                self.x = -settings.size.FOOTBALL_PITCH_WIDTH // 2 + self.radius + 1
                 self.direction = 180 - self.direction
-            if self.x > utils.FOOTBALL_PITCH_WIDTH // 2 - self.radius:
-                self.x = utils.FOOTBALL_PITCH_WIDTH // 2 - self.radius - 1
+            if self.x > settings.size.FOOTBALL_PITCH_WIDTH // 2 - self.radius:
+                self.x = settings.size.FOOTBALL_PITCH_WIDTH // 2 - self.radius - 1
                 self.direction = 180 - self.direction
-            if self.y < -utils.FOOTBALL_PITCH_HEIGHT // 2 + self.radius:
-                self.y = -utils.FOOTBALL_PITCH_HEIGHT // 2 + self.radius + 1
+            if self.y < -settings.size.FOOTBALL_PITCH_HEIGHT // 2 + self.radius:
+                self.y = -settings.size.FOOTBALL_PITCH_HEIGHT // 2 + self.radius + 1
                 self.direction = (self.direction + 180) % 360
                 self.direction = 180 - self.direction
-            if self.y > utils.FOOTBALL_PITCH_HEIGHT // 2 - self.radius:
-                self.y = utils.FOOTBALL_PITCH_HEIGHT // 2 - self.radius - 1
+            if self.y > settings.size.FOOTBALL_PITCH_HEIGHT // 2 - self.radius:
+                self.y = settings.size.FOOTBALL_PITCH_HEIGHT // 2 - self.radius - 1
                 self.direction = (self.direction + 180) % 360
                 self.direction = 180 - self.direction
         else:
