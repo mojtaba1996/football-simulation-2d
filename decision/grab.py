@@ -1,6 +1,6 @@
 import random
 
-import utils
+import utils.geometry
 from .decision import Decision
 
 
@@ -16,7 +16,7 @@ class GrabDecision(Decision):
 
     def _can_grab(self):
         grab_radius = self.player.radius + self.runner.ball.radius
-        distance = utils.distance(self.runner.ball, self.player)
+        distance = utils.geometry.distance(self.runner.ball, self.player)
         r = random.randint(0, 9)
         if distance < grab_radius and (r < 5 or self.runner.ball.owner is None):
             return True

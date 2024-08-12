@@ -1,4 +1,6 @@
-import utils
+import settings.color
+import settings.size
+import utils.display
 
 
 class Scoreboard:
@@ -8,29 +10,29 @@ class Scoreboard:
         self.cycle_number = cycle_number
 
     def draw(self, screen):
-        utils.write_text_on_pygame_screen(
+        utils.display.write_text_on_pygame_screen(
             screen,
-            utils.SCOREBOARD_FONT_SIZE,
-            utils.SCOREBOARD_RED_SCORE_COLOR,
+            settings.size.SCOREBOARD_FONT_SIZE,
+            settings.color.SCOREBOARD_RED_SCORE_COLOR,
             str(self.red_score),
-            -utils.SCREEN_WIDTH // 2 + utils.HORIZONTAL_MARGIN // 3,
+            -settings.size.SCREEN_WIDTH // 2 + settings.size.HORIZONTAL_MARGIN // 3,
             -300,
         )
-        utils.write_text_on_pygame_screen(
+        utils.display.write_text_on_pygame_screen(
             screen,
-            utils.SCOREBOARD_FONT_SIZE,
-            utils.SCOREBOARD_BLUE_SCORE_COLOR,
+            settings.size.SCOREBOARD_FONT_SIZE,
+            settings.color.SCOREBOARD_BLUE_SCORE_COLOR,
             str(self.blue_score),
-            utils.SCREEN_WIDTH // 2 - utils.HORIZONTAL_MARGIN * 2 // 3,
+            settings.size.SCREEN_WIDTH // 2 - settings.size.HORIZONTAL_MARGIN * 2 // 3,
             -300,
         )
-        utils.write_text_on_pygame_screen(
+        utils.display.write_text_on_pygame_screen(
             screen,
-            utils.SCOREBOARD_FONT_SIZE,
-            utils.SCOREBOARD_CYCLE_COLOR,
+            settings.size.SCOREBOARD_FONT_SIZE,
+            settings.color.SCOREBOARD_CYCLE_COLOR,
             str(self.cycle_number),
             0,
-            -utils.FOOTBALL_PITCH_HEIGHT // 2 - utils.VERTICAL_MARGIN // 3,
+            -settings.size.FOOTBALL_PITCH_HEIGHT // 2 - settings.size.VERTICAL_MARGIN // 3,
         )
 
     @property

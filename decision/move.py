@@ -1,5 +1,6 @@
 import exception
-import utils
+import settings.game
+import settings.size
 from .decision import Decision
 
 
@@ -11,10 +12,10 @@ class MoveDecision(Decision):
 
     def validate(self):
         super().validate()
-        if not 0 <= self.speed <= utils.MAX_PLAYER_SPEED:
+        if not 0 <= self.speed <= settings.game.MAX_PLAYER_SPEED:
             raise exception.DecisionException('Wrong move speed')
-        if not -utils.FOOTBALL_PITCH_WIDTH // 2 < self.destination.x < utils.FOOTBALL_PITCH_WIDTH // 2 or \
-                not -utils.FOOTBALL_PITCH_HEIGHT // 2 < self.destination.y < utils.FOOTBALL_PITCH_HEIGHT // 2:
+        if not -settings.size.FOOTBALL_PITCH_WIDTH // 2 < self.destination.x < settings.size.FOOTBALL_PITCH_WIDTH // 2 or \
+                not -settings.size.FOOTBALL_PITCH_HEIGHT // 2 < self.destination.y < settings.size.FOOTBALL_PITCH_HEIGHT // 2:
             raise exception.DecisionException('Cannot move out of screen')
 
     def perform(self):

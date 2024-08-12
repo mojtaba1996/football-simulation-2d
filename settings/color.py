@@ -1,6 +1,3 @@
-from .utils import *
-
-
 GRASS_COLOR = (0, 125, 0)
 GOAL_COLOR = {
     'red': (255, 0, 0),

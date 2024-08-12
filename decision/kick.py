@@ -1,5 +1,5 @@
 import exception
-import utils
+import settings.game
 from .decision import Decision
 
 
@@ -11,7 +11,7 @@ class KickDecision(Decision):
 
     def validate(self):
         super().validate()
-        if not 0 <= self.power <= utils.MAX_KICK_POWER:
+        if not 0 <= self.power <= settings.game.MAX_KICK_POWER:
             raise exception.DecisionException('Wrong kick power')
         if self.runner.ball.owner != self.player:
             raise exception.DecisionException('The player is not the owner of the ball') 

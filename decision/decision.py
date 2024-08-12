@@ -1,5 +1,5 @@
 import exception
-import utils
+import settings.game
 
 class Decision:
     def __init__(self, runner, player_number, player_color):
@@ -7,7 +7,7 @@ class Decision:
         self.set_player(player_number, player_color)
 
     def set_player(self, player_number, player_color):
-        if not 0 <= player_number < utils.PLAYER_COUNT:
+        if not 0 <= player_number < settings.game.PLAYER_COUNT:
             raise exception.DecisionException("Wrong player number {}".format(player_number))
         if player_color == 'red':
             self.player = self.runner.red_players[player_number]
