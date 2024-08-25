@@ -27,7 +27,6 @@ class Runner:
         self._show_and_increase_cycle_number()
 
     def run(self):
-        global red_responses, blue_responses
         end = False
         pause = False
         while not end:
