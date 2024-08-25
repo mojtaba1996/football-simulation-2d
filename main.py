@@ -4,7 +4,7 @@ from runner import Runner
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="2D Soccer Simulation")
+    parser = argparse.ArgumentParser(description="Football Simulation 2D")
     parser.add_argument('--config', type=str, default='config.yaml', help='Path to the configuration file')
 
     args = parser.parse_args()
